@@ -1,7 +1,12 @@
 #!/usr/bin/env python
 
+import os
+import sys
 import time
 import math
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "icm20948-python-main"))
+
 from icm20948 import ICM20948
 
 # Complementary filter coefficient: higher = trust gyro more, lower = trust accel more

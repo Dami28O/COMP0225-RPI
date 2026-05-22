@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 
+import sys
 import time
+import os
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "icm20948-python-main"))
 
 from icm20948 import ICM20948
 

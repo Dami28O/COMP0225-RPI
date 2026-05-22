@@ -17,7 +17,7 @@ BETA = 0.1
 SERIAL_PORT           = "/dev/ttyUSB0"
 BAUD_RATE             = 9600
 
-PITCH_THRESHOLD       = 10.0   # deg   — rule 1: forward lean
+PITCH_THRESHOLD       = 15.0   # deg   — rule 1: forward lean
 PITCH_VEL_THRESHOLD   = 20.0   # deg/s — rule 2: actively moving into the lean
 # VERT_ACCEL_THRESHOLD = 0.15   # g    — rule 3: vertical accel (reserved for later)
 DURATION_THRESHOLD    = 0.300  # s    — rule 4: sustained for 300ms
@@ -26,7 +26,7 @@ COOLDOWN              = 5.0    # s    — minimum gap between motor on commands
 
 # --- IMU & serial setup ---
 imu = ICM20948()
-ser = serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=1)
+# ser = serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=1)
 
 # --- Initialise quaternion from first sensor reading (ENU frame) ---
 ax, ay, az, _, _, _ = imu.read_accelerometer_gyro_data()
@@ -140,7 +140,7 @@ while True:
             pitch_above_since = now
         if (now - pitch_above_since) >= DURATION_THRESHOLD:  # rule 4
             if (now - last_motor_on_time) >= COOLDOWN:
-                ser.write(b"motor on\n")
+                # ser.write(b"motor on\n")
                 last_motor_on_time = now
                 print("Intent detected — motor on")
     else:

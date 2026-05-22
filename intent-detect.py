@@ -4,6 +4,7 @@ import os
 import sys
 import time
 import math
+import csv
 import serial
 from collections import deque
 
@@ -54,9 +55,16 @@ pitch_above_since  = None        # timestamp when pitch first exceeded threshold
 pitch_accel_buf    = deque(maxlen=PITCH_ACCEL_WINDOW)
 prev_pitch_vel     = 0.0
 
-last_time = time.time()
+start_time = time.time()
+last_time  = start_time
 
-print("Intent detection running. Press Ctrl+C to exit.\n")
+csv_path = os.path.join(os.path.dirname(__file__), "detections.csv")
+csv_file = open(csv_path, "w", newline="")
+csv_writer = csv.writer(csv_file)
+csv_writer.writerow(["elapsed_s", "pitch_deg", "pitch_vel_degs", "avg_pitch_accel_degs2"])
+
+print("Intent detection running. Press Ctrl+C to exit.")
+print("Logging detections to:", csv_path, "\n")
 
 while True:
     ax, ay, az, gx, gy, gz = imu.read_accelerometer_gyro_data()
@@ -142,7 +150,13 @@ while True:
             if (now - last_motor_on_time) >= COOLDOWN:
                 # ser.write(b"motor on\n")
                 last_motor_on_time = now
-                print("Intent detected — motor on")
+                elapsed = now - start_time
+                csv_writer.writerow(["{:.3f}".format(elapsed),
+                                     "{:.2f}".format(pitch),
+                                     "{:.2f}".format(pitch_vel),
+                                     "{:.2f}".format(avg_pitch_accel)])
+                csv_file.flush()
+                print("Intent detected — motor on  (t={:.3f}s)".format(elapsed))
     else:
         pitch_above_since = None
 
